@@ -2,6 +2,13 @@
 
 Rust-based HTTP server, serves any directory, inspired by `python -m http.server`.
 
+## Using
+
+```shell
+➜ serve
+Listening on http://0.0.0.0:8000
+```
+
 ## Install
 
 ### Install with Homebrew
