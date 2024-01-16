@@ -8,13 +8,13 @@ build_macos:
 # make zip_macos_x86_64 version=0.1.0
 zip_macos_x86_64:
 	cd target/x86_64-apple-darwin/release && \
-	tar -zcvf $(version)_Darwin_x86_64.tar.gz serve && \
+	tar -zcvf $(version)_Darwin_x86_64.tar.gz server && \
 	cd ../../../
 
 # make zip_macos_arm64 version=0.1.0
 zip_macos_arm64:
 	cd target/aarch64-apple-darwin/release && \
-	tar -zcvf $(version)_Darwin_arm64.tar.gz serve && \
+	tar -zcvf $(version)_Darwin_arm64.tar.gz server && \
 	cd ../../../
 
 # make build_macos version=0.1.0
