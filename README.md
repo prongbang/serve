@@ -16,7 +16,7 @@ Listening on http://0.0.0.0:8000
 ```shell
 brew update
 brew tap prongbang/homebrew-formulae
-brew install serve
+brew install server
 ```
 
 or
