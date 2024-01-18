@@ -1,3 +1,6 @@
+install:
+	cargo install --path .
+
 # make build_macos version=0.1.0
 build_macos:
 	cargo build --release --target x86_64-apple-darwin
