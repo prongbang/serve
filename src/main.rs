@@ -10,7 +10,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    let version = "0.2.0";
+    let version = "0.2.1";
 
     // Initial logging
     std::env::set_var("RUST_LOG", "server");
@@ -33,9 +33,13 @@ async fn main() {
         .allow_any_origin()
         .allow_methods(vec!["HEAD", "CONNECT", "TRACE", "GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]);
 
+    // Create a Warp filter for serving the main HTML file
+    let index_html = warp::any()
+        .and(warp::fs::file("index.html"));
+
     // Combine the log filter with the filter for static assets
     let logger = warp::log("server");
-    let routes = static_dir.with(cors).with(logger);
+    let routes = index_html.or(static_dir).with(cors).with(logger);
 
     // Create the address tuple
     let ip_address = [0, 0, 0, 0];
