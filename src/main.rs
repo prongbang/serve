@@ -10,11 +10,12 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    let version = "0.2.1";
+    let version = "0.2.2";
 
     // Initial logging
     std::env::set_var("RUST_LOG", "server");
     pretty_env_logger::init();
+    let logger = warp::log("server");
 
     // Parse command line arguments
     let args = Args::parse();
@@ -34,12 +35,10 @@ async fn main() {
         .allow_methods(vec!["HEAD", "CONNECT", "TRACE", "GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]);
 
     // Create a Warp filter for serving the main HTML file
-    let index_html = warp::any()
-        .and(warp::fs::file("index.html"));
+    let index_html = warp::any().and(warp::fs::file("index.html"));
 
-    // Combine the log filter with the filter for static assets
-    let logger = warp::log("server");
-    let routes = index_html.or(static_dir).with(cors).with(logger);
+    // Combine route
+    let routes = static_dir.or(index_html).with(cors).with(logger);
 
     // Create the address tuple
     let ip_address = [0, 0, 0, 0];
@@ -48,10 +47,9 @@ async fn main() {
 
     // Print the listening address
     println!("{}", format!(r#"
-   ____
-  / __/__ _____  _____ ____
- _\ \/ -_) __/ |/ / -_) __/
-/___/\__/_/  |___/\__/_/  (v{})
+  ___ ___ _____  _____ ____
+ (_-</ -_) __/ |/ / -_) __/
+/___/\__/_/  |___/\__/_/ (v{})
 
 Listen on http://{}:{}
 "#, version, ip, addr.1));
