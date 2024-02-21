@@ -1,3 +1,5 @@
+mod logger;
+
 use clap::Parser;
 use warp::Filter;
 
@@ -6,16 +8,13 @@ use warp::Filter;
 struct Args {
     #[arg(short, long, default_value_t = 8000)]
     port: u16,
+    #[arg(short, long, default_value_t = false)]
+    silent: bool,
 }
 
 #[tokio::main]
 async fn main() {
-    let version = "0.2.2";
-
-    // Initial logging
-    std::env::set_var("RUST_LOG", "server");
-    pretty_env_logger::init();
-    let logger = warp::log("server");
+    let version = "0.2.3";
 
     // Parse command line arguments
     let args = Args::parse();
@@ -37,9 +36,6 @@ async fn main() {
     // Create a Warp filter for serving the main HTML file
     let index_html = warp::any().and(warp::fs::file("index.html"));
 
-    // Combine route
-    let routes = static_dir.or(index_html).with(cors).with(logger);
-
     // Create the address tuple
     let ip_address = [0, 0, 0, 0];
     let addr = (ip_address, args.port);
@@ -55,5 +51,12 @@ Listen on http://{}:{}
 "#, version, ip, addr.1));
 
     // Start the Warp server with only the static assets filter
-    warp::serve(routes).run(addr).await;
+    if args.silent {
+        let routes = static_dir.or(index_html).with(cors);
+        warp::serve(routes).run(addr).await;
+    } else {
+        logger::setup_logging();
+        let routes = static_dir.or(index_html).with(cors).with(logger::log());
+        warp::serve(routes).run(addr).await;
+    };
 }
